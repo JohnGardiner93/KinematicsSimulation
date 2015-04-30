@@ -1,4 +1,4 @@
-function RobotHeadControl(serialMotorControl, motor, X)
+function RobotGripperControl(serialMotorControl, motor, X)
 %% ==========================Robot Head Control============================
 % RoboHAZMAT: Senior Design Project
 % Motion Control Team
@@ -10,16 +10,13 @@ function RobotHeadControl(serialMotorControl, motor, X)
 % motor degree angles.
 
 % Translate thetas into Mechatronic Arm controls
-X = X*180/pi;
-X(1) = (-X(1) + 98);
-X(2) = (-X(2) + 98);
-X(3) = (X(3) + 98);
+X(1) = (X(1));
+X(2) = (X(2));
 
 % Cut off the angles at 0 and 180 degrees
 X(X > 180) = 180;
 X(X < 0) = 0;
 
 % Move the arm motors
-serialMotorControl.servoWrite(motor.neckYaw, round(X(1)));
-serialMotorControl.servoWrite(motor.neckPitch, round(X(2)));
-serialMotorControl.servoWrite(motor.neckRoll, round(X(3)));
+serialMotorControl.servoWrite(motor.gripperLeft, round(X(1)));
+serialMotorControl.servoWrite(motor.gripperRight, round(X(2)));

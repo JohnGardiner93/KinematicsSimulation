@@ -1,6 +1,6 @@
 function Robot = Simulation1(Robot)
 %% ================Inverse Kinematic Tracing Trajectories==================
-
+%Robot = CreateRobotRoboHAZMAT;
 % Sets up the Keyboard Control
 [RobotFigure, states] = SetupKeyboardControl;
 
@@ -18,6 +18,15 @@ traj = TrajectoriesRoboHAZMAT(0, traj);
 
 % Sets up the communication with the Dynamixels
 [dynamixelR] = DynamixelControlSetup;
+[~, ~, ~, ~, arbotixCOM] = SetupCOM;
+
+% Setup the arbotixCOM port
+%if (rightArm || leftArm)
+    serialObjArbotix = SetupArbotixControlSerial(arbotixCOM);
+    %serialObjArbotix = 0;
+    pause(2);
+    DynamixelControl(dynamixelR,serialObjArbotix,[-pi/4;0;0;-pi/2;0;0],'r');
+%end
 
 % History vectors for the desired trajectories
 histD = zeros(traj.runs,3);
@@ -50,7 +59,7 @@ while (states.run)
         RobotPlot(Robot);   
         
         % Moves the Robot Dynamixels
-        DynamixelControl(dynamixelR, X, 'r');
+        DynamixelControl(dynamixelR, serialObjArbotix, X, 'r');
         
         % Plots the ghost trajectories
         histT(i,:) = KC.points.kPG(1:3,controlPoint)'; MS = 10;
@@ -61,4 +70,5 @@ while (states.run)
         drawnow;
     end
 end
+DynamixelControl(dynamixelR,serialObjArbotix,[0;0;0;-pi/4;0;0],'r');
 calllib('dynamixel','dxl_terminate');
